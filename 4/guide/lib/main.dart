@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:guide/result.dart';
 
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './result.dart';
 
 //void main() {
 //  runApp(MyApp());
@@ -20,29 +21,87 @@ class _MyAppState extends State<MyApp> {
   //void answerQuestion() {
   //  print('Answer chosen');
   //}
-  final questions = const [
+  final _questions = const [
     {
       'questionText': "What's your favorite color?",
-      'answers': ['Black', 'Red', 'Green', 'White'],
+      'answers': [
+        {
+          'text': 'Black',
+          'score': 10,
+        },
+        {
+          'text': 'Red',
+          'score': 5,
+        },
+        {
+          'text': 'Green',
+          'score': 3,
+        },
+        {
+          'text': 'White',
+          'score': 1,
+        },
+      ],
     },
     {
       'questionText': "What's your favorite animal?",
-      'answers': ['Rabbit', 'Snake', 'Elephant', 'Lion'],
+      'answers': [
+        {
+          'text': 'Rabbit',
+          'score': 1,
+        },
+        {
+          'text': 'Snake',
+          'score': 10,
+        },
+        {
+          'text': 'Elephant',
+          'score': 3,
+        },
+        {
+          'text': 'Lion',
+          'score': 5,
+        },
+      ],
     },
     {
       'questionText': 'Who is your favourite instructor?',
-      'answers': ['Max', 'Max', 'Max'],
+      'answers': [
+        {
+          'text': 'Max',
+          'score': 0,
+        },
+        {
+          'text': 'Max',
+          'score': 0,
+        },
+        {
+          'text': 'Max',
+          'score': 0,
+        },
+      ],
     },
   ];
 
   var _i = 0;
+  var _totalScore = 0;
 
-  void _answerQuestion() {
+  void _resetQuiz() {
+    setState(() {
+      _i = 0;
+      _totalScore = 0;
+    });
+  }
+
+  void _answerQuestion(int score) {
+    _totalScore += score;
     setState(() {
       _i++;
     });
-    if (_i < questions.length) {
+    if (_i < _questions.length) {
       print('We have more questions!');
+    } else {
+      print('No more questions');
     }
   }
 
@@ -53,17 +112,10 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('My App'),
         ),
-        body: Column(
-          children: [
-            //Text(questions[_i]),
-            Question(
-              questions[_i]['questionText'],
-            ),
-            ...(questions[_i]['answers'] as List<String>).map((answer) {
-              return Answer(_answerQuestion, answer);
-            }).toList(),
-          ],
-        ),
+        body: _i < _questions.length
+            ? Quiz(
+                i: _i, questions: _questions, answerQuestion: _answerQuestion)
+            : Result(_totalScore, _resetQuiz),
       ),
     );
   }
